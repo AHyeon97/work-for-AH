@@ -623,14 +623,14 @@ function listSlide(pres, d) {
   return s;
 }
 
-function thanksSlide(pres, notes) {
+function thanksSlide(pres, notes, region) {
   const s = pres.addSlide();
   darkBase(pres, s);
   s.addText("수고했어요!", {
     x: M, y: 2.90, w: 10.5, h: 1.30, fontFace: FONT, fontSize: 48, bold: true, color: WHITE,
     align: "left", valign: "middle", margin: 0, isTextBox: true,
   });
-  s.addText("2026 앵커 늘봄 프로그램  ·  우리고장 탐험대  ·  공주 · 부여 · 논산 · 계룡", {
+  s.addText("2026 앵커 늘봄 프로그램  ·  우리고장 탐험대  ·  " + (region || "공주 · 부여"), {
     x: M, y: 4.30, w: 11.0, h: 0.40, fontFace: FONT, fontSize: 14, color: MOSS,
     align: "left", valign: "middle", margin: 0, isTextBox: true,
   });
