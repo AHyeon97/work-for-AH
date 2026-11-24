@@ -456,7 +456,11 @@ function tableSlide(pres, d) {
   title(s, d.title, d.sub);
   const cols = d.headers.length;
   const cw = (W - M * 2) / cols;
-  const hy = 2.42, rh = d.rowH || 0.86;
+  const hy = 2.42;
+  // 표 + 핵심 발문이 활동 번호 표식과 겹치지 않도록 행 높이를 자동으로 줄인다
+  const limit = d.q ? 5.92 : 6.38;
+  const avail = (limit - (hy + 0.62)) / d.rows.length;
+  const rh = Math.min(d.rowH || 0.86, avail);
   d.headers.forEach((h, i) => {
     const x = M + i * cw;
     s.addShape(pres.ShapeType.rect, {
