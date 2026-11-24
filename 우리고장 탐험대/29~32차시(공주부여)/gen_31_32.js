@@ -4,7 +4,7 @@ const L = require("./deck_lib.js");
 const CHIP = "31~32차시 · 4회차";
 const REF = "마을 공간 사진 – 공주시청·부여군청 누리집(공공누리), 이용자 카드·이용표 양식 – 자체 제작";
 
-const p = L.newDeck("우리고장 탐험대 31~32차시 수업PPT");
+const p = L.newDeck("우리충남 탐험놀이 31~32차시 수업PPT");
 
 /* 1 표지 */
 L.coverSlide(p, {

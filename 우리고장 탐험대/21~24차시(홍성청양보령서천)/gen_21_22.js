@@ -4,7 +4,7 @@ const L = require("./deck_lib.js");
 const CHIP = "21~22차시 · 3회차";
 const REF = "한우·고추·김·한산모시 사진 – 홍성군청·청양군청·보령시청·서천군청 누리집(공공누리), 정보 카드·선물 도안 – 자체 제작";
 
-const p = L.newDeck("우리고장 탐험대 21~22차시 수업PPT");
+const p = L.newDeck("우리충남 탐험놀이 21~22차시 수업PPT");
 
 /* 1 표지 */
 L.coverSlide(p, {

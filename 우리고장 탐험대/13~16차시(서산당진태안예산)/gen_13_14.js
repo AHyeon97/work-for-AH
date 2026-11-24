@@ -4,7 +4,7 @@ const L = require("./deck_lib.js");
 const CHIP = "13~14차시 · 3회차";
 const REF = "마늘·쌀·꽃게·사과 사진 – 서산시청·당진시청·태안군청·예산군청 누리집(공공누리), 정보 카드·경로 카드 – 자체 제작";
 
-const p = L.newDeck("우리고장 탐험대 13~14차시 수업PPT");
+const p = L.newDeck("우리충남 탐험놀이 13~14차시 수업PPT");
 
 /* 1 표지 */
 L.coverSlide(p, {

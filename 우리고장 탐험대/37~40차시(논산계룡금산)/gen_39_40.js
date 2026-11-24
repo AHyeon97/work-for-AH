@@ -4,7 +4,7 @@ const L = require("./deck_lib.js");
 const CHIP = "39~40차시 · 4회차";
 const REF = "농촌·산지 마을 생활 사진 – 논산시청·계룡시청·금산군청 누리집(공공누리), 도움 카드·역할 분담표 – 자체 제작";
 
-const p = L.newDeck("우리고장 탐험대 39~40차시 수업PPT");
+const p = L.newDeck("우리충남 탐험놀이 39~40차시 수업PPT");
 
 /* 1 표지 */
 L.coverSlide(p, {

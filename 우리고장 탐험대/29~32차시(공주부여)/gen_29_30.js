@@ -4,7 +4,7 @@ const L = require("./deck_lib.js");
 const CHIP = "29~30차시 · 3회차";
 const REF = "알밤·멜론 사진 – 공주시청·부여군청 누리집(공공누리), 특산물 정보 카드·꾸러미 도안 – 자체 제작";
 
-const p = L.newDeck("우리고장 탐험대 29~30차시 수업PPT");
+const p = L.newDeck("우리충남 탐험놀이 29~30차시 수업PPT");
 
 /* 1 표지 */
 L.coverSlide(p, {

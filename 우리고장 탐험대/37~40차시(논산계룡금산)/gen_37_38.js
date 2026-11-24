@@ -4,7 +4,7 @@ const L = require("./deck_lib.js");
 const CHIP = "37~38차시 · 3회차";
 const REF = "딸기·인삼 사진 – 논산시청·금산군청 누리집(공공누리), 정보 카드·쓰임 카드·선물 도안 – 자체 제작";
 
-const p = L.newDeck("우리고장 탐험대 37~38차시 수업PPT");
+const p = L.newDeck("우리충남 탐험놀이 37~38차시 수업PPT");
 
 /* 1 표지 */
 L.coverSlide(p, {

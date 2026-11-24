@@ -1,4 +1,4 @@
-// 2026 앵커 늘봄 『우리고장 탐험대』 공주·부여·논산·계룡 권역
+// 2026 앵커 늘봄 『우리충남 탐험놀이』 — 특산물 · 생활과 공동체
 // 29~30차시(3회차) / 31~32차시(4회차) 수업PPT
 // 구성은 천안·아산 권역 확정본(5~6차시·7~8차시 수업PPT)의 슬라이드 체계를 따름.
 const pptxgen = require("pptxgenjs");
@@ -13,7 +13,7 @@ function newDeck(title) {
   const p = new pptxgen();
   p.defineLayout({ name: "K16x9", width: W, height: H });
   p.layout = "K16x9";
-  p.author = "우리고장 탐험대 개발팀";
+  p.author = "우리충남 탐험놀이 개발팀";
   p.title = title;
   return p;
 }
@@ -129,7 +129,7 @@ function coverSlide(pres, d) {
     x: M, y: 1.26, w: 9.6, h: 0.40, fontFace: FONT, fontSize: 17, color: MOSS,
     align: "left", valign: "middle", margin: 0, charSpacing: 2, isTextBox: true,
   });
-  s.addText("우리고장 탐험대", {
+  s.addText("우리충남 탐험놀이", {
     x: M, y: 1.74, w: 10.5, h: 1.12, fontFace: FONT, fontSize: 54, bold: true, color: WHITE,
     align: "left", valign: "middle", margin: 0, isTextBox: true,
   });
@@ -634,7 +634,7 @@ function thanksSlide(pres, notes, region) {
     x: M, y: 2.90, w: 10.5, h: 1.30, fontFace: FONT, fontSize: 48, bold: true, color: WHITE,
     align: "left", valign: "middle", margin: 0, isTextBox: true,
   });
-  s.addText("2026 앵커 늘봄 프로그램  ·  우리고장 탐험대  ·  " + (region || "공주 · 부여"), {
+  s.addText("2026 앵커 늘봄 프로그램  ·  우리충남 탐험놀이  ·  " + (region || "공주 · 부여"), {
     x: M, y: 4.30, w: 11.0, h: 0.40, fontFace: FONT, fontSize: 14, color: MOSS,
     align: "left", valign: "middle", margin: 0, isTextBox: true,
   });
