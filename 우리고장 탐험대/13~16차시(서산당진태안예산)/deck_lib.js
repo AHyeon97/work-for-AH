@@ -33,19 +33,21 @@ function darkBase(pres, s) {
 }
 
 // 우측 하단 활동 번호 표식 (확정본의 '1 / 01' 표기)
-function footMark(pres, s, actNo, secNo) {
+function footMark(pres, s, actNo, secNo, opts) {
   if (!actNo) return;
+  const fy = (opts && opts.y) || H - 0.88;
+  const sc = (opts && opts.secColor) || MUTED;
   s.addShape(pres.ShapeType.ellipse, {
-    x: W - M - 0.86, y: H - 0.88, w: 0.34, h: 0.34,
+    x: W - M - 0.86, y: fy, w: 0.34, h: 0.34,
     fill: { color: MOSS }, line: { color: MOSS, width: 0 },
   });
   s.addText(String(actNo), {
-    x: W - M - 0.86, y: H - 0.88, w: 0.34, h: 0.34, align: "center", valign: "middle",
+    x: W - M - 0.86, y: fy, w: 0.34, h: 0.34, align: "center", valign: "middle",
     fontFace: FONT, fontSize: 11, bold: true, color: FOREST_DK, margin: 0, isTextBox: true,
   });
   s.addText(secNo, {
-    x: W - M - 0.44, y: H - 0.88, w: 0.44, h: 0.34, align: "right", valign: "middle",
-    fontFace: FONT, fontSize: 11, bold: true, color: MUTED, margin: 0, isTextBox: true,
+    x: W - M - 0.44, y: fy, w: 0.44, h: 0.34, align: "right", valign: "middle",
+    fontFace: FONT, fontSize: 11, bold: true, color: sc, margin: 0, isTextBox: true,
   });
 }
 
@@ -105,7 +107,19 @@ function question(pres, s, txt, y) {
   });
 }
 
-function photoSlot(pres, s, label, x, y, w, h, kind) {
+function photoSlot(pres, s, label, x, y, w, h, kind, img, fit) {
+  if (img) {
+    s.addShape(pres.ShapeType.roundRect, {
+      x, y, w, h, rectRadius: 0.08,
+      fill: { color: TINT2 }, line: { color: MOSS, width: 0 },
+    });
+    s.addImage({ path: img, x, y, w, h, sizing: { type: fit || "cover", w, h } });
+    s.addShape(pres.ShapeType.roundRect, {
+      x, y, w, h, rectRadius: 0.08,
+      fill: { type: "none" }, line: { color: MOSS, width: 1 },
+    });
+    return;
+  }
   s.addShape(pres.ShapeType.roundRect, {
     x, y, w, h, rectRadius: 0.08,
     fill: { color: TINT2 }, line: { color: MOSS, width: 1.5, dashType: "dash" },
@@ -117,6 +131,32 @@ function photoSlot(pres, s, label, x, y, w, h, kind) {
   s.addText(label, {
     x: x + 0.1, y: y + h / 2 - 0.10, w: w - 0.2, h: 0.5, align: "center", valign: "middle",
     fontFace: FONT, fontSize: 15, bold: true, color: FOREST, margin: 0, isTextBox: true,
+  });
+}
+
+// 동기유발 사진 줄 — 1장은 원본 비율, 여러 장은 같은 크기로 맞춰 배치
+function imageRow(pres, s, imgs) {
+  const gap = 0.24, maxW = W - M * 2, y0 = 1.95, maxH = 2.80, n = imgs.length;
+  const boxes = [];
+  if (n === 1) {
+    const ar = imgs[0].ar || 1.5;
+    const w = Math.min(maxW, maxH * ar);
+    boxes.push({ x: (W - w) / 2, y: y0, w, h: maxH, path: imgs[0].path, fit: "contain" });
+  } else {
+    let bw = (maxW - gap * (n - 1)) / n;
+    const h = Math.min(maxH, bw / 1.35);
+    bw = Math.min(bw, h * 2.0);
+    const x0 = (W - (bw * n + gap * (n - 1))) / 2;
+    for (let i = 0; i < n; i++) {
+      boxes.push({ x: x0 + i * (bw + gap), y: y0, w: bw, h, path: imgs[i].path, fit: "cover" });
+    }
+  }
+  boxes.forEach((b) => {
+    s.addImage({ path: b.path, x: b.x, y: b.y, w: b.w, h: b.h, sizing: { type: b.fit, w: b.w, h: b.h } });
+    s.addShape(pres.ShapeType.roundRect, {
+      x: b.x, y: b.y, w: b.w, h: b.h, rectRadius: 0.08,
+      fill: { type: "none" }, line: { color: MOSS, width: 1 },
+    });
   });
 }
 
@@ -228,7 +268,7 @@ function promptSlide(pres, d) {
   s.background = { color: d.bg || WHITE };
   head(pres, s, d.chip, d.right || "동기유발");
   title(s, d.title);
-  if (!d.photo) {
+  if (!d.photo && !d.imgs) {
     s.addShape(pres.ShapeType.roundRect, {
       x: M, y: 2.20, w: W - M * 2, h: 1.70, rectRadius: 0.14,
       fill: { color: WHITE }, line: { color: FOREST, width: 2 },
@@ -239,8 +279,9 @@ function promptSlide(pres, d) {
       align: "center", valign: "middle", margin: 0, isTextBox: true,
     });
   }
+  const stepTop = d.imgs ? 5.01 : 4.16;
   (d.steps || []).forEach((t, i) => {
-    const y = 4.16 + i * 0.62;
+    const y = stepTop + i * 0.62;
     s.addShape(pres.ShapeType.roundRect, {
       x: M, y, w: W - M * 2, h: 0.52, rectRadius: 0.1,
       fill: { color: i === 0 ? TINT : TINT2 }, line: { color: MOSS, width: 1 },
@@ -253,13 +294,15 @@ function promptSlide(pres, d) {
     });
   });
   if (d.foot) {
+    const fy = Math.max(6.10, stepTop + (d.steps || []).length * 0.62 + 0.10);
     s.addText(d.foot, {
-      x: M, y: 6.10, w: W - M * 2, h: 0.40,
+      x: M, y: fy, w: W - M * 2, h: 0.40,
       fontFace: FONT, fontSize: 12, color: MUTED,
       align: "left", valign: "middle", margin: 0, isTextBox: true,
     });
   }
-  if (d.photo) photoSlot(pres, s, d.photo, M, 2.20, W - M * 2, 1.70, d.photoKind);
+  if (d.imgs) imageRow(pres, s, d.imgs);
+  else if (d.photo) photoSlot(pres, s, d.photo, M, 2.20, W - M * 2, 1.70, d.photoKind);
   footMark(pres, s, d.act, d.sec);
   s.addNotes(d.notes);
   return s;
@@ -387,13 +430,22 @@ function cardsSlide(pres, d) {
   d.cards.forEach((c, i) => {
     const x = M + i * (cw + gap);
     if (d.photo) {
-      photoSlot(pres, s, c.head, x, top, cw, 1.92, d.photoKind);
+      const ph = c.img ? 1.80 : 1.92;
+      const by = c.img ? 2.24 : 2.06;
+      photoSlot(pres, s, c.head, x, top, cw, ph, d.photoKind, c.img, d.imgFit);
+      if (c.img) {
+        s.addText(c.head, {
+          x: x + 0.22, y: top + ph + 0.06, w: cw - 0.44, h: 0.34,
+          fontFace: FONT, fontSize: 14, bold: true, color: FOREST,
+          align: "left", valign: "middle", margin: 0, isTextBox: true,
+        });
+      }
       s.addShape(pres.ShapeType.roundRect, {
-        x, y: top + 2.06, w: cw, h: ch - 2.06, rectRadius: 0.1,
+        x, y: top + by, w: cw, h: ch - by, rectRadius: 0.1,
         fill: { color: TINT2 }, line: { color: MOSS, width: 1 },
       });
       s.addText(c.body, {
-        x: x + 0.22, y: top + 2.18, w: cw - 0.44, h: ch - 2.30,
+        x: x + 0.22, y: top + by + 0.12, w: cw - 0.44, h: ch - by - 0.24,
         fontFace: FONT, fontSize: 13, color: INK, lineSpacing: 18,
         align: "left", valign: "top", margin: 0, isTextBox: true,
       });
@@ -428,7 +480,7 @@ function cardsSlide(pres, d) {
       fill: { color: FOREST }, line: { color: FOREST, width: 0 },
     });
     s.addText(d.band, {
-      x: M + 0.34, y: by, w: W - M * 2 - 0.68, h: 0.82,
+      x: M + 0.34, y: by, w: W - M * 2 - 1.34, h: 0.82,
       fontFace: FONT, fontSize: 16, bold: true, color: WHITE,
       align: "left", valign: "middle", margin: 0, isTextBox: true,
     });
@@ -443,7 +495,7 @@ function cardsSlide(pres, d) {
       align: "left", valign: "middle", margin: 0, isTextBox: true,
     });
   }
-  footMark(pres, s, d.act, d.sec);
+  footMark(pres, s, d.act, d.sec, d.band ? { y: by + 0.24, secColor: PALE } : null);
   s.addNotes(d.notes);
   return s;
 }
