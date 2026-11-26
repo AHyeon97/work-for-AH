@@ -128,10 +128,12 @@ function photoSlot(pres, s, label, x, y, w, h, kind, img, fit) {
     x, y: y + h / 2 - 0.42, w, h: 0.3, align: "center", valign: "middle",
     fontFace: FONT, fontSize: 11, color: MUTED, margin: 0, isTextBox: true,
   });
-  s.addText(label, {
-    x: x + 0.1, y: y + h / 2 - 0.10, w: w - 0.2, h: 0.5, align: "center", valign: "middle",
-    fontFace: FONT, fontSize: 15, bold: true, color: FOREST, margin: 0, isTextBox: true,
-  });
+  if (label) {
+    s.addText(label, {
+      x: x + 0.1, y: y + h / 2 - 0.10, w: w - 0.2, h: 0.5, align: "center", valign: "middle",
+      fontFace: FONT, fontSize: 15, bold: true, color: FOREST, margin: 0, isTextBox: true,
+    });
+  }
 }
 
 // 동기유발 사진 줄 — 1장은 원본 비율, 여러 장은 같은 크기로 맞춰 배치
@@ -268,7 +270,25 @@ function promptSlide(pres, d) {
   s.background = { color: d.bg || WHITE };
   head(pres, s, d.chip, d.right || "동기유발");
   title(s, d.title);
-  if (!d.photo && !d.imgs) {
+  if (d.imgs && d.big) {
+    const y0 = 2.05, h = 2.60;
+    const iw = Math.min(5.40, h * (d.imgs[0].ar || 1.5));
+    s.addImage({ path: d.imgs[0].path, x: M, y: y0, w: iw, h, sizing: { type: "contain", w: iw, h } });
+    s.addShape(pres.ShapeType.roundRect, {
+      x: M, y: y0, w: iw, h, rectRadius: 0.08,
+      fill: { type: "none" }, line: { color: MOSS, width: 1 },
+    });
+    const tx = M + iw + 0.30, tw = W - M - tx;
+    s.addShape(pres.ShapeType.roundRect, {
+      x: tx, y: y0, w: tw, h, rectRadius: 0.14,
+      fill: { color: WHITE }, line: { color: FOREST, width: 2 },
+    });
+    s.addText(d.big, {
+      x: tx + 0.30, y: y0, w: tw - 0.60, h,
+      fontFace: FONT, fontSize: d.bigSize || 24, bold: true, color: FOREST, lineSpacing: 36,
+      align: "center", valign: "middle", margin: 0, isTextBox: true,
+    });
+  } else if (!d.photo && !d.imgs) {
     s.addShape(pres.ShapeType.roundRect, {
       x: M, y: 2.20, w: W - M * 2, h: 1.70, rectRadius: 0.14,
       fill: { color: WHITE }, line: { color: FOREST, width: 2 },
@@ -301,7 +321,7 @@ function promptSlide(pres, d) {
       align: "left", valign: "middle", margin: 0, isTextBox: true,
     });
   }
-  if (d.imgs) imageRow(pres, s, d.imgs);
+  if (d.imgs && !d.big) imageRow(pres, s, d.imgs);
   else if (d.photo) photoSlot(pres, s, d.photo, M, 2.20, W - M * 2, 1.70, d.photoKind);
   footMark(pres, s, d.act, d.sec);
   s.addNotes(d.notes);
@@ -427,13 +447,14 @@ function cardsSlide(pres, d) {
   const gap = n >= 4 ? 0.32 : 0.42;
   const cw = (W - M * 2 - gap * (n - 1)) / n;
   const top = 2.38, ch = d.photo ? 3.52 : 2.46;
+  const anyImg = (d.cards || []).some((c) => c.img);
   d.cards.forEach((c, i) => {
     const x = M + i * (cw + gap);
     if (d.photo) {
-      const ph = c.img ? 1.80 : 1.92;
-      const by = c.img ? 2.24 : 2.06;
-      photoSlot(pres, s, c.head, x, top, cw, ph, d.photoKind, c.img, d.imgFit);
-      if (c.img) {
+      const ph = anyImg ? 1.80 : 1.92;
+      const by = anyImg ? 2.24 : 2.06;
+      photoSlot(pres, s, anyImg ? null : c.head, x, top, cw, ph, d.photoKind, c.img, d.imgFit);
+      if (anyImg) {
         s.addText(c.head, {
           x: x + 0.22, y: top + ph + 0.06, w: cw - 0.44, h: 0.34,
           fontFace: FONT, fontSize: 14, bold: true, color: FOREST,
